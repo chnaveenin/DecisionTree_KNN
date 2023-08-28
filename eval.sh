@@ -1,24 +1,26 @@
 #!/bin/bash
 
-# Check if the required command-line arguments are provided
-if [ $# -ne 2 ]; then
-    echo "Usage: $0 test_embeddings.npy test_labels.npy"
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <input_file.npy>"
     exit 1
 fi
 
-# Assign the command-line arguments to variables
-test_embeddings_file="$1"
-test_labels_file="$2"
+# input file is given as first argument
+input_file=$1
 
-# Check if the provided files exist
-if [ ! -f "$test_embeddings_file" ] || [ ! -f "$test_labels_file" ]; then
-    echo "One or both input files not found."
+if [[ $input_file == *.npy ]]; then
+    echo "Given a valid file"
+else
+    echo "Input file is not an .npy file, please give a valid .npy file"
     exit 1
 fi
 
-# Run Python script to calculate metrics
-metrics=$(python3 calculate_metrics.py "$test_embeddings_file" "$test_labels_file")
+echo "Evaluating $input_file"
 
-# Print the metrics
-echo "Metrics:"
-echo "$metrics"
+#check for input file
+if [ ! -f $input_file ]; then
+    echo "Input file not found!"
+    exit 1
+fi
+
+python3 eval.py $input_file
