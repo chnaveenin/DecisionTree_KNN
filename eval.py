@@ -1,8 +1,8 @@
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split
 import sys
-import numpy as np
 import heapq
+import numpy as np
 import pandas as pd
 
 data = []
@@ -74,9 +74,9 @@ class KNNModel:
     y_pred = self.predict(X_test)
     # calculate the metrics
     accuracy = accuracy_score(Y_test, y_pred)
-    precision = precision_score(Y_test, y_pred, average='micro', zero_division=0)
-    recall = recall_score(Y_test, y_pred, average='micro', zero_division=0)
-    f1 = f1_score(Y_test, y_pred, average='micro', zero_division=0)
+    precision = precision_score(Y_test, y_pred, average='macro', zero_division=0)
+    recall = recall_score(Y_test, y_pred, average='macro', zero_division=0)
+    f1 = f1_score(Y_test, y_pred, average='macro', zero_division=0)
     return [accuracy*100, precision*100, recall*100, f1*100]
   
   def get_accuracy(self, X_test, Y_test):
@@ -93,8 +93,16 @@ if __name__ == "__main__":
   
   knn = KNNModel()
   knn.set_encoder('ResNet')
-  knn.set_distance_metric('euclidean')
-  knn.set_k(5)
+  knn.set_distance_metric('manhattan')
+  knn.set_k(13)
   X_train, X_test, Y_train, Y_test = train_test_split(knn.encoder['X'], knn.encoder['Y'], test_size=0.2, random_state=0)
   knn.fit(X_train, Y_train)
-  print(*knn.evaluate(X_test, Y_test))
+  print('RESNET, accuracy precision recall f1: ', *knn.evaluate(X_test, Y_test))
+
+  knn = KNNModel()
+  knn.set_encoder('VIT')
+  knn.set_distance_metric('manhattan')
+  knn.set_k(1)
+  X_train, X_test, Y_train, Y_test = train_test_split(knn.encoder['X'], knn.encoder['Y'], test_size=0.2, random_state=0)
+  knn.fit(X_train, Y_train)
+  print('VIT, accuracy precision recall f1: ', *knn.evaluate(X_test, Y_test))
