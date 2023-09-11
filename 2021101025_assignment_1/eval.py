@@ -88,21 +88,24 @@ if __name__ == "__main__":
     print("Usage: python3 eval.py <embeddings_file>")
     sys.exit(1)
   
-  input_file = sys.argv[1]
-  data = np.load(input_file, allow_pickle=True)
+  input_test_file = sys.argv[1]
+  data = np.load('./data.npy', allow_pickle=True)
+  test_data = np.load(input_test_file, allow_pickle=True)
+  
+  Y_test = test_data[:, 3]
   
   knn = KNNModel()
   knn.set_encoder('ResNet')
   knn.set_distance_metric('manhattan')
   knn.set_k(13)
-  X_train, X_test, Y_train, Y_test = train_test_split(knn.encoder['X'], knn.encoder['Y'], test_size=0.2, random_state=0)
-  knn.fit(X_train, Y_train)
+  X_test = test_data[:, 1]
+  knn.fit(knn.encoder['X'], knn.encoder['Y'])
   print('RESNET, accuracy precision recall f1: ', *knn.evaluate(X_test, Y_test))
 
   knn = KNNModel()
   knn.set_encoder('VIT')
   knn.set_distance_metric('manhattan')
   knn.set_k(1)
-  X_train, X_test, Y_train, Y_test = train_test_split(knn.encoder['X'], knn.encoder['Y'], test_size=0.2, random_state=0)
-  knn.fit(X_train, Y_train)
+  X_test = test_data[:, 2]
+  knn.fit(knn.encoder['X'], knn.encoder['Y'])
   print('VIT, accuracy precision recall f1: ', *knn.evaluate(X_test, Y_test))
